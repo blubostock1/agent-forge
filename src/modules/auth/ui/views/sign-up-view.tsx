@@ -2,10 +2,9 @@
 
 import { z } from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
-import { OctagonAlertIcon } from "lucide-react";
+import { Github, OctagonAlertIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 import { authClient } from "@/lib/auth-client";
 import { Card, CardContent } from "@/components/ui/card";
@@ -22,6 +21,7 @@ import {
     FormMessage,
   } from "@/components/ui/form";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
     name: z.string().min(1, {message: 'Name is required'}),
@@ -34,7 +34,8 @@ const formSchema = z.object({
 });
 
 export const SignUpView = () => {
-    const router  = useRouter();
+    const router = useRouter();
+
     const [error, setError] = useState<string | null>(null);
     const [pending, setPending] = useState(false);
 
@@ -56,7 +57,8 @@ export const SignUpView = () => {
             {
                 name: data.name,
                 email: data.email,
-                password: data.password
+                password: data.password,
+                callbackURL: "/"
             },
             {
                 onSuccess: () => {
@@ -69,6 +71,26 @@ export const SignUpView = () => {
                 },
             }
         )
+    }
+
+    const onSocial = () => {
+        setError(null);
+        setPending(true);
+
+        authClient.signIn.social(
+            {
+                provider: "github",
+                callbackURL: "/"
+            }, {
+            onSuccess: () => {
+                setPending(false);
+                router.push("/");
+            },
+            onError: ({error}) => {
+                setPending(false);
+                setError(error.message)
+            },
+        });
     }
 
     return (
@@ -140,12 +162,9 @@ export const SignUpView = () => {
                                         Or continue with
                                     </span>
                                 </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <Button variant="outline" type="button" className="w-full" disabled={pending}>
-                                        Google
-                                    </Button>
-                                    <Button variant="outline" type="button" className="w-full" disabled={pending}>
-                                        Github
+                                <div className="grid grid-cols-1 gap-4">
+                                <Button variant="outline" type="button" className="w-full" disabled={pending} onClick={onSocial}>
+                                        <Github />Github
                                     </Button>
                                 </div>
                                 <div className="text-center text-sm">
