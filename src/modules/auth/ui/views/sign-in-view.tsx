@@ -22,6 +22,7 @@ import {
     FormMessage,
   } from "@/components/ui/form";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
     email: z.string().email(),
@@ -29,6 +30,8 @@ const formSchema = z.object({
 })
 
 export const SignInView = () => {
+    const router = useRouter();
+
     const [error, setError] = useState<string | null>(null);
     const [pending, setPending] = useState(false);
 
@@ -53,6 +56,7 @@ export const SignInView = () => {
             {
                 onSuccess: () => {
                     setPending(false);
+                    router.push("/");
                 },
                 onError: ({error}) => {
                     setPending(false);

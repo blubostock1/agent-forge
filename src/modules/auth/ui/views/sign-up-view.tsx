@@ -21,6 +21,7 @@ import {
     FormMessage,
   } from "@/components/ui/form";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
     name: z.string().min(1, {message: 'Name is required'}),
@@ -33,6 +34,8 @@ const formSchema = z.object({
 });
 
 export const SignUpView = () => {
+    const router = useRouter();
+
     const [error, setError] = useState<string | null>(null);
     const [pending, setPending] = useState(false);
 
@@ -60,6 +63,7 @@ export const SignUpView = () => {
             {
                 onSuccess: () => {
                     setPending(false);
+                    router.push("/");
                 },
                 onError: ({error}) => {
                     setPending(false);
