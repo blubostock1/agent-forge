@@ -142,9 +142,6 @@ export const SignUpView = () => {
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <Button variant="outline" type="button" className="w-full" disabled={pending}>
-                                        Google
-                                    </Button>
-                                    <Button variant="outline" type="button" className="w-full" disabled={pending}>
                                         Github
                                     </Button>
                                 </div>
