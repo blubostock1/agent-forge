@@ -5,7 +5,6 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import { OctagonAlertIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Github } from "lucide-react";
 
 import { authClient } from "@/lib/auth-client";
@@ -30,7 +29,6 @@ const formSchema = z.object({
 })
 
 export const SignInView = () => {
-    const router  = useRouter();
     const [error, setError] = useState<string | null>(null);
     const [pending, setPending] = useState(false);
 
@@ -49,12 +47,12 @@ export const SignInView = () => {
         authClient.signIn.email(
             {
                 email: data.email,
-                password: data.password
+                password: data.password,
+                callbackURL: "/"
             },
             {
                 onSuccess: () => {
                     setPending(false);
-                    router.push("/");
                 },
                 onError: ({error}) => {
                     setPending(false);
@@ -62,6 +60,25 @@ export const SignInView = () => {
                 },
             }
         )
+    }
+
+    const onSocial = () => {
+        setError(null);
+        setPending(true);
+
+        authClient.signIn.social(
+            {
+            provider: "github",
+            callbackURL: "/"
+        }, {
+            onSuccess: () => {
+                setPending(false);
+            },
+            onError: ({error}) => {
+                setPending(false);
+                setError(error.message)
+            },
+        });
     }
 
     return (
@@ -112,9 +129,7 @@ export const SignInView = () => {
                                     </span>
                                 </div>
                                 <div className="grid grid-cols-1 gap-4">
-                                    <Button variant="outline" type="button" className="w-full" disabled={pending} onClick={() => {
-                                        authClient.signIn.social({provider: "github"})
-                                    }}>
+                                    <Button variant="outline" type="button" className="w-full" disabled={pending} onClick={onSocial}>
                                         <Github />Github
                                     </Button>
                                 </div>
